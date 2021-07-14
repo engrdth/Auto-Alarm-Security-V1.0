@@ -1,0 +1,74 @@
+// Alarm System ESP32 Version 1.0
+// Author: Reese Holford
+// Xi-reka Embedded Controlls, www.xireka.com
+
+
+
+//initialise variables for Alarm System
+
+int key_pos = 36; //Vp pin, keyfob +ve out pin
+int key_neg = 39; //Vn pin, keyfob -ve out pin
+int key_state_pos;
+int key_state_neg;
+int key_diff;
+
+//Relay Module
+int relay_I1 = 13;
+int relay_I2 = 12;
+int relay_I3 = 14;
+int relay_I4 = 27;
+
+//Vibration Sensors
+int vib_B = 34;
+int vib_W = 35;
+
+
+
+void setup(){
+  
+  Serial.begin(115200);
+
+  pinMode(key_pos, INPUT);
+  pinMode(key_neg, INPUT);
+  pinMode(relay_I1, OUTPUT);
+  pinMode(relay_I2, OUTPUT);
+  pinMode(relay_I3, OUTPUT);
+  pinMode(relay_I4, OUTPUT);
+  
+}
+
+void loop(){
+  
+digitalWrite(relay_I3, HIGH); //alarm
+digitalWrite(relay_I4, HIGH); //lights
+
+key_state_neg = analogRead(key_neg);
+key_state_pos = analogRead(key_pos);
+
+key_diff = key_state_pos - key_state_neg;
+
+Serial.print("Key State Negative = ");
+Serial.println(key_state_neg);
+delay(50);
+Serial.print("Key State Positive = ");
+Serial.println(key_state_pos);
+delay(50);
+Serial.print("Key Difference = ");
+Serial.println(key_diff);
+delay(50);
+
+//unlock/lock door
+
+if (key_diff>3500){
+  digitalWrite(relay_I1, LOW);
+  digitalWrite(relay_I2, HIGH);
+  delay(50);
+}else
+ if (key_diff<3500){
+ digitalWrite(relay_I1, HIGH);
+ digitalWrite(relay_I2, LOW);
+ delay(50);
+ 
+ }
+
+}
